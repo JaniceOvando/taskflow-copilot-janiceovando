@@ -1,0 +1,9 @@
+target/
+data/
+.env
+*.pem
+*.ppk
+*.key
+.idea/
+*.iml
+.playwright-mcp/
