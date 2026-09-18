@@ -1,0 +1,36 @@
+== Verificando rutas de archivo citadas entre backticks ==
+[OK]        src/main/java/com/taskflow/config/DataSeeder.java
+[OK]        src/main/java/com/taskflow/config/SecurityConfig.java
+[OK]        src/main/java/com/taskflow/controller/ProjectController.java
+[OK]        src/main/java/com/taskflow/dto/TaskRequest.java
+[OK]        src/main/java/com/taskflow/mapper/TaskMapper.java
+[OK]        src/main/java/com/taskflow/model/Task.java
+[OK]        src/main/java/com/taskflow/repository/TaskRepository.java
+[OK]        src/main/java/com/taskflow/security/JwtAuthenticationFilter.java
+[OK]        src/main/java/com/taskflow/security/JwtService.java
+[OK]        src/main/java/com/taskflow/service/TaskService.java
+[OK]        src/test/java/com/taskflow/unit/TaskServiceTest.java
+
+== Verificando clases citadas entre backticks (una palabra CamelCase) ==
+[OK]        DataSeeder  ->  src/main/java/com/taskflow/config/DataSeeder.java
+[OK]        GlobalExceptionHandler  ->  src/main/java/com/taskflow/advice/GlobalExceptionHandler.java
+[REVISA]    Location  ->  no se encontró un archivo Location.java (puede ser un método o clase externa)
+[OK]        ProjectController  ->  src/main/java/com/taskflow/controller/ProjectController.java
+[OK]        ProjectSecurity  ->  src/main/java/com/taskflow/security/ProjectSecurity.java
+[OK]        SecurityConfig  ->  src/main/java/com/taskflow/config/SecurityConfig.java
+[REVISA]    TODO  ->  no se encontró un archivo TODO.java (puede ser un método o clase externa)
+[OK]        Task  ->  src/main/java/com/taskflow/model/Task.java
+[OK]        TaskController  ->  src/main/java/com/taskflow/controller/TaskController.java
+[OK]        TaskMapper  ->  src/main/java/com/taskflow/mapper/TaskMapper.java
+[OK]        TaskRepository  ->  src/main/java/com/taskflow/repository/TaskRepository.java
+[OK]        TaskRequest  ->  src/main/java/com/taskflow/dto/TaskRequest.java
+[OK]        TaskResponse  ->  src/main/java/com/taskflow/dto/TaskResponse.java
+[OK]        TaskService  ->  src/main/java/com/taskflow/service/TaskService.java
+[REVISA]    UserDetails  ->  no se encontró un archivo UserDetails.java (puede ser un método o clase externa)
+
+== Verificando métodos citados tipo Clase.metodo(...) ==
+[OK]        Task.crear  ->  src/main/java/com/taskflow/model/Task.java
+[OK]        Task.estaVencida  ->  src/main/java/com/taskflow/model/Task.java
+[OK]        TaskMapper.aEntidadNueva  ->  src/main/java/com/taskflow/mapper/TaskMapper.java
+[OK]        TaskMapper.aResponse  ->  src/main/java/com/taskflow/mapper/TaskMapper.java
+[OK]        TaskService.crear  ->  src/main/java/com/taskflow/service/TaskService.java
