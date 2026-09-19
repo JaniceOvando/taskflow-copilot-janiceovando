@@ -84,6 +84,14 @@ public class TaskController {
         return tareas.stream().map(TaskMapper::aResponse).toList();
     }
 
+    @Operation(summary = "Lista tareas sin responsable",
+            description = "Tareas cuya assigneeId es null; orden por dueDate asc. Reusa la regla SIN_ASIGNAR.")
+    @GetMapping("/tasks/unassigned")
+    public List<TaskResponse> getUnassigned() {
+        List<Task> tareas = taskService.sinResponsable();
+        return tareas.stream().map(TaskMapper::aResponse).toList();
+    }
+
     @Operation(summary = "Obtiene una tarea por id",
             description = "200 con el TaskResponse; 404 uniforme si el id no existe.")
     @GetMapping("/tasks/{id:\\d+}")
