@@ -157,6 +157,62 @@ class TaskServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("vencidas")
+    class Vencidas {
+
+        @Test
+        void vencidas_devuelveSoloVencidasYOrdenadas() throws Exception {
+            // Construir datos reales (constructor de rehidratación)
+            Task vencidaAntigua = new Task(1L, "V001", "d", TaskStatus.IN_PROGRESS, Priority.MED, PROYECTO, 5L, java.time.LocalDate.now().minusDays(5));
+            Task vencidaReciente = new Task(2L, "V002", "d", TaskStatus.IN_PROGRESS, Priority.MED, PROYECTO, 5L, java.time.LocalDate.now().minusDays(1));
+            Task doneAntigua = new Task(3L, "DoneOld", "d", TaskStatus.DONE, Priority.MED, PROYECTO, 5L, java.time.LocalDate.now().minusDays(10));
+            Task sinFecha = new Task(4L, "NoDate", "d", TaskStatus.TODO, Priority.MED, PROYECTO, 5L, null);
+
+            // El repositorio devuelve una mezcla; el service filtra y ordena.
+            when(repository.findAll()).thenReturn(java.util.List.of(vencidaReciente, doneAntigua, vencidaAntigua, sinFecha));
+
+            java.util.List<Task> res = service.vencidas();
+            // Solo las dos vencidas (done no cuenta, sin fecha no cuenta)
+            assertEquals(2, res.size());
+            // Orden por dueDate asc: vencidaAntigua (-5) antes que vencidaReciente (-1)
+            assertEquals(vencidaAntigua, res.get(0));
+            assertEquals(vencidaReciente, res.get(1));
+        }
+    }
+
+    @Nested
+    @DisplayName("SinResponsable")
+    class SinResponsable {
+
+        @Test
+        void sinResponsable_repoMixto_devuelveTresEnOrdenPorFecha() throws TaskValidationException {
+            // Repo devuelve, EN ESTE ORDEN: 10d sin assignee, con assignee, sin assignee sin fecha, 2d sin assignee
+            java.time.LocalDate hoy = java.time.LocalDate.now();
+            Task t10 = new Task(10L, "NoAssignee10", "d", TaskStatus.TODO, Priority.MED, PROYECTO, null, hoy.plusDays(10));
+            Task withAssignee = new Task(11L, "WithAssignee", "d", TaskStatus.TODO, Priority.MED, PROYECTO, 5L, hoy.plusDays(5));
+            Task noDate = new Task(12L, "NoAssigneeNoDate", "d", TaskStatus.TODO, Priority.MED, PROYECTO, null, null);
+            Task t2 = new Task(13L, "NoAssignee2Days", "d", TaskStatus.TODO, Priority.MED, PROYECTO, null, hoy.plusDays(2));
+
+            when(repository.findAll()).thenReturn(java.util.List.of(t10, withAssignee, noDate, t2));
+
+            java.util.List<Task> res = service.sinResponsable();
+            java.util.List<Long> ids = res.stream().map(Task::getId).toList();
+
+            // Esperado: 2d (id 13), 10d (id 10), sin fecha (id 12)
+            assertEquals(java.util.List.of(13L, 10L, 12L), ids);
+        }
+
+        @Test
+        void sinResponsable_repoSoloConResponsable_devuelveListaVacia() throws TaskValidationException {
+            Task with1 = new Task(20L, "With1", "d", TaskStatus.TODO, Priority.MED, PROYECTO, 1L, null);
+            when(repository.findAll()).thenReturn(java.util.List.of(with1));
+
+            java.util.List<Task> res = service.sinResponsable();
+            assertEquals(0, res.size());
+        }
+    }
+
     /** Fabrica una Task de rehidratación REAL (dato, no mock). assigneeId null = sin responsable. */
     private Task tarea(Long id, String title, Long assigneeId) {
         try {
