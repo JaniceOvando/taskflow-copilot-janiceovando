@@ -177,6 +177,21 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.status").value(404));
     }
 
+    @Test
+    void getOverdue_retorna200YListaOrdenada() throws Exception {
+        // Según la spec, la semilla con h2 tendría la tarea 7 vencida; en el slice stubeamos el service.
+        Task vencida = new Task(7L, "Corregir bug de fechas", "desc", TaskStatus.IN_PROGRESS,
+                Priority.MED, 1L, 1L, java.time.LocalDate.now().minusDays(1));
+        when(taskService.vencidas()).thenReturn(java.util.List.of(vencida));
+
+        mockMvc.perform(get("/tasks/overdue"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(7))
+                .andExpect(jsonPath("$[0].title").value("Corregir bug de fechas"))
+                .andExpect(jsonPath("$[0].status").value("IN_PROGRESS"));
+    }
+
     // ---- helpers de datos (reales, no mocks) ----
 
     private Task tarea(Long id, String title, TaskStatus status) {

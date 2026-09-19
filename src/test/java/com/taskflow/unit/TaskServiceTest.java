@@ -157,6 +157,30 @@ class TaskServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("vencidas")
+    class Vencidas {
+
+        @Test
+        void vencidas_devuelveSoloVencidasYOrdenadas() throws Exception {
+            // Construir datos reales (constructor de rehidratación)
+            Task vencidaAntigua = new Task(1L, "V001", "d", TaskStatus.IN_PROGRESS, Priority.MED, PROYECTO, 5L, java.time.LocalDate.now().minusDays(5));
+            Task vencidaReciente = new Task(2L, "V002", "d", TaskStatus.IN_PROGRESS, Priority.MED, PROYECTO, 5L, java.time.LocalDate.now().minusDays(1));
+            Task doneAntigua = new Task(3L, "DoneOld", "d", TaskStatus.DONE, Priority.MED, PROYECTO, 5L, java.time.LocalDate.now().minusDays(10));
+            Task sinFecha = new Task(4L, "NoDate", "d", TaskStatus.TODO, Priority.MED, PROYECTO, 5L, null);
+
+            // El repositorio devuelve una mezcla; el service filtra y ordena.
+            when(repository.findAll()).thenReturn(java.util.List.of(vencidaReciente, doneAntigua, vencidaAntigua, sinFecha));
+
+            java.util.List<Task> res = service.vencidas();
+            // Solo las dos vencidas (done no cuenta, sin fecha no cuenta)
+            assertEquals(2, res.size());
+            // Orden por dueDate asc: vencidaAntigua (-5) antes que vencidaReciente (-1)
+            assertEquals(vencidaAntigua, res.get(0));
+            assertEquals(vencidaReciente, res.get(1));
+        }
+    }
+
     /** Fabrica una Task de rehidratación REAL (dato, no mock). assigneeId null = sin responsable. */
     private Task tarea(Long id, String title, Long assigneeId) {
         try {
