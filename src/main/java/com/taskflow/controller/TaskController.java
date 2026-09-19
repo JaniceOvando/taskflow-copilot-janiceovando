@@ -72,7 +72,10 @@ public class TaskController {
         return tareas.stream().map(TaskMapper::aResponse).toList();
     }
 
-    /** GET /tasks/{id} — 200 con TaskResponse, o 404 uniforme (orElseThrow -> advice). */
+    /**
+     * GET /tasks/overdue — devuelve las tareas vencidas (Task.estaVencida() == true).
+     * Devuelve List<TaskResponse> ordenadas por dueDate asc.
+     */
     @Operation(summary = "Lista tareas vencidas",
             description = "Tareas cuya Task.estaVencida() es true; orden por dueDate asc.")
     @GetMapping("/tasks/overdue")
